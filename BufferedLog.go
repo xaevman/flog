@@ -104,7 +104,7 @@ func (this *BufferedLog) Print(format string, v ...interface{}) {
     if v == nil {
         this.print(format)
     } else {
-        this.print(format, v)
+        this.print(format, v...)
     }
 }
 
@@ -157,8 +157,8 @@ func (this *BufferedLog) print(format string, v ...interface{}) {
         log.Print(format)
         this.logger.Print(format)
     } else {
-        log.Printf(format, v)
-        this.logger.Printf(format, v)
+        log.Printf(format, v...)
+        this.logger.Printf(format, v...)
     }
 }
 

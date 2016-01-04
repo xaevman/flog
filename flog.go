@@ -15,6 +15,8 @@
 package flog
 
 import (
+    "github.com/xaevman/crash"
+    
     "fmt"
     "log"
     "os"
@@ -27,7 +29,7 @@ import (
 const DefaultFlushIntervalSec = 5
 
 // Logger format flags.
-const FLogFlags = log.Ldate | log.Lmicroseconds | log.Lshortfile
+const FLogFlags = log.Ldate | log.Lmicroseconds
 
 // Log file open flags.
 const FLogOpenFlags = os.O_RDWR | os.O_APPEND | os.O_CREATE
@@ -81,7 +83,10 @@ func New(name, logPath string, logType int) FLog {
         l := log.New(&bLog.buffer, "", FLogFlags)
         bLog.logger = l
 
-        go bLog.asyncFlush()
+        go func() {
+            defer crash.HandleAll()
+            bLog.asyncFlush()
+        }()
 
         newLog = &bLog
         break

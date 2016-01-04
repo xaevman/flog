@@ -28,9 +28,13 @@ func TestLog(t *testing.T) {
 
     iLog.Print("this is a new INFO log")
     eLog.Print("this is a new ERROR log")
-    iLog.Print("testing 123")
-    eLog.Print("testing 456")
-    iLog.Print("testing 789")
+    iLog.Print("testing %s", "123")
+    eLog.Print("testing %s", "456")
+    iLog.Print("testing %s", "789")
+
+    iLog.Print("testing decimal: %d", 123)
+    iLog.Print("testing bool: %t", false)
+    iLog.Print("testing float: %f", 123.456)
 
     iLog = Rotate(iLog)
     eLog = Rotate(eLog)
