@@ -21,6 +21,8 @@ import (
     "log"
     "os"
     "path"
+    "path/filepath"
+    "runtime"
     "strings"
     "time"
 )
@@ -39,6 +41,10 @@ const (
     BufferedFile = iota
     DirectFile
 )
+
+// FlogCallDepth is used to determine how far up the callstack to look
+// for the calling file:line information when formatting log messages.
+var FlogCallDepth = 3
 
 // FLog provides a common interface for different file-backed logs. This package
 // includes two primary implementations; BufferedLog and DirectLog.
@@ -165,17 +171,24 @@ func Rotate(log FLog) FLog {
 // the string, and makes sure that it is terminated with a newline. The processed
 // string is then returned to the caller.
 func fixFormat(name, format string) string {
+    _, file, line, ok := runtime.Caller(FlogCallDepth)
+    if ok {
+        file = fmt.Sprintf(" <%s:%d>", filepath.Base(file), line)
+    }
+
     if format[len(format) - 1] == '\n' {
         return fmt.Sprintf(
-            "[%s] %s",
+            "[%s]%s %s",
             strings.ToUpper(name),
+            file,
             format,
         )
     }
 
     return fmt.Sprintf(
-        "[%s] %s\n",
+        "[%s]%s %s\n",
         strings.ToUpper(name),
+        file,
         format,
     )
 }
